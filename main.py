@@ -1,5 +1,9 @@
 import asyncio
 import os
+import sys
+
+from pathlib import Path
+
 
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
@@ -20,10 +24,12 @@ llm = ChatGoogleGenerativeAI(
     temperature=0
 )
 
+base_dir = Path(__file__).parent  # carpeta actual donde está main.py
+server_path = base_dir / "servers" / "math_server.py"
 
 stdio_server_params = StdioServerParameters(
     command="python",
-    args=["/Users/edenmarco/GithubProjects/mcp-crash-course/servers/math_server.py"],
+    args=[str(server_path)],
 )
 
 async def main():
@@ -32,7 +38,7 @@ async def main():
             await session.initialize()
             print("session initialized")
             tools = await load_mcp_tools(session)
-
+            print(tools)
 
             agent = create_react_agent(llm,tools)
 
